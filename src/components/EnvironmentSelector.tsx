@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useRadioStore, getEnvColorVar } from '@/stores/useRadioStore';
 import { motion } from 'framer-motion';
 
@@ -23,11 +22,7 @@ const glowActiveMap: Record<string, string> = {
 };
 
 const EnvironmentSelector = () => {
-  const { environments, currentEnvironmentSlug, setEnvironment, loadEnvironments, environmentsLoaded } = useRadioStore();
-
-  useEffect(() => {
-    if (!environmentsLoaded) loadEnvironments();
-  }, [environmentsLoaded, loadEnvironments]);
+  const { environments, currentEnvironmentSlug, setEnvironment } = useRadioStore();
 
   if (environments.length === 0) return null;
 

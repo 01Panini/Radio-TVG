@@ -30,6 +30,7 @@ const HeroPlayer = () => {
     isPlaying, togglePlay, volume, setVolume,
     currentEnvironmentSlug, currentTrack,
     getCurrentEnvironment, getCurrentStreamUrl,
+    isBuffering, streamError,
   } = useRadioStore();
 
   const env = getCurrentEnvironment();
@@ -88,8 +89,25 @@ const HeroPlayer = () => {
             {currentTrack.title}
           </p>
           <p className="text-white/60 text-sm mt-1">{currentTrack.artist}</p>
-          {!streamUrl && (
-            <p className="text-white/30 text-[10px] mt-2">Stream não configurado</p>
+
+          {/* Buffering indicator */}
+          {isBuffering && isPlaying && (
+            <div className="flex items-center justify-center gap-1.5 mt-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-white/60 animate-pulse" />
+              <p className="text-white/50 text-[10px] font-medium">Carregando stream...</p>
+            </div>
+          )}
+
+          {/* Stream error */}
+          {streamError && (
+            <div className="flex items-center justify-center gap-1.5 mt-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-orange-400" />
+              <p className="text-orange-300/80 text-[10px] font-medium">{streamError}</p>
+            </div>
+          )}
+
+          {!streamUrl && !streamError && (
+            <p className="text-white/30 text-[10px] mt-2">Nenhum stream disponível</p>
           )}
         </div>
 
