@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      stream_environments: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          label: string
+          slug: string
+          sort_order: number
+          stream_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          label: string
+          slug: string
+          sort_order?: number
+          stream_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          label?: string
+          slug?: string
+          sort_order?: number
+          stream_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
