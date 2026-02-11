@@ -4,8 +4,6 @@ import { Play } from 'lucide-react';
 import LiveBadge from '@/components/LiveBadge';
 import VideoPlayer from '@/components/VideoPlayer';
 import logoRadio from '@/assets/logo-radio-tvg.png';
-import LiveBadge from '@/components/LiveBadge';
-import VideoPlayer from '@/components/VideoPlayer';
 
 import thumbLiveCulto from '@/assets/thumb-live-culto.jpg';
 import thumbManhaSertaneja from '@/assets/thumb-manha-sertaneja.jpg';
