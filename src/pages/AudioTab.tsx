@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import HeroPlayer from '@/components/HeroPlayer';
 import EnvironmentSelector from '@/components/EnvironmentSelector';
@@ -7,7 +8,11 @@ import { useRadioStore } from '@/stores/useRadioStore';
 import logoRadio from '@/assets/logo-radio-tvg.png';
 
 const AudioTab = () => {
-  const { isLive } = useRadioStore();
+  const { isLive, loadEnvironments, environmentsLoaded } = useRadioStore();
+
+  useEffect(() => {
+    if (!environmentsLoaded) loadEnvironments();
+  }, [environmentsLoaded, loadEnvironments]);
 
   return (
     <motion.div
@@ -16,24 +21,17 @@ const AudioTab = () => {
       transition={{ duration: 0.4 }}
       className="min-h-screen pb-24"
     >
-      {/* Minimal Header */}
       <header className="flex items-center justify-between px-5 pt-5 pb-3">
         <div className="h-10 sm:h-11 md:h-12 overflow-hidden flex items-center">
-          <img
-            src={logoRadio}
-            alt="Rádio TVG"
-            className="h-[200%] w-auto object-contain object-center"
-          />
+          <img src={logoRadio} alt="Rádio TVG" className="h-[200%] w-auto object-contain object-center" />
         </div>
         {isLive && <LiveBadge />}
       </header>
 
-      {/* Hero Player — 65vh dominant card */}
       <div className="px-4">
         <HeroPlayer />
       </div>
 
-      {/* Environment Cards */}
       <div className="mt-5 px-4">
         <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.15em] mb-3 px-1">
           Ambientes
@@ -41,7 +39,6 @@ const AudioTab = () => {
         <EnvironmentSelector />
       </div>
 
-      {/* Sponsor (subtle, bottom) */}
       <div className="mt-4 px-4">
         <SponsorCarousel />
       </div>
