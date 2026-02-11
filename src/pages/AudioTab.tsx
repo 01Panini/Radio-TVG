@@ -17,12 +17,14 @@ const AudioTab = () => {
       className="min-h-screen pb-24"
     >
       {/* Minimal Header */}
-      <header className="flex items-center justify-between px-5 pt-4 pb-2">
-        <img
-          src={logoRadio}
-          alt="Rádio TVG"
-          className="h-10 sm:h-11 md:h-12 w-auto object-contain"
-        />
+      <header className="flex items-center justify-between px-5 pt-5 pb-3">
+        <div className="h-10 sm:h-11 md:h-12 overflow-hidden flex items-center">
+          <img
+            src={logoRadio}
+            alt="Rádio TVG"
+            className="h-[200%] w-auto object-contain object-center"
+          />
+        </div>
         {isLive && <LiveBadge />}
       </header>
 
