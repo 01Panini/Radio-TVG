@@ -1,17 +1,17 @@
-import { useRadioStore, environmentMeta, type Environment } from '@/stores/useRadioStore';
+import { useRadioStore, getEnvColorVar } from '@/stores/useRadioStore';
 import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { motion } from 'framer-motion';
 import LiveBadge from './LiveBadge';
 import SponsorCarousel from './SponsorCarousel';
 
-const glowMap: Record<Environment, string> = {
+const glowMap: Record<string, string> = {
   sertanejo: 'shadow-[0_0_60px_-10px_hsl(var(--env-sertanejo)/0.3)]',
   poprock: 'shadow-[0_0_60px_-10px_hsl(var(--env-poprock)/0.3)]',
   raiz: 'shadow-[0_0_60px_-10px_hsl(var(--env-raiz)/0.3)]',
   gospel: 'shadow-[0_0_60px_-10px_hsl(var(--env-gospel)/0.3)]',
 };
 
-const gradientMap: Record<Environment, string> = {
+const gradientMap: Record<string, string> = {
   sertanejo: 'from-env-sertanejo/10 to-transparent',
   poprock: 'from-env-poprock/10 to-transparent',
   raiz: 'from-env-raiz/10 to-transparent',
@@ -19,31 +19,30 @@ const gradientMap: Record<Environment, string> = {
 };
 
 const AudioPlayerCard = () => {
-  const { isPlaying, togglePlay, volume, setVolume, currentEnvironment, isLive, currentTrack } =
+  const { isPlaying, togglePlay, volume, setVolume, currentEnvironmentSlug, isLive, currentTrack, getCurrentEnvironment, getCurrentStreamUrl } =
     useRadioStore();
-  const meta = environmentMeta[currentEnvironment];
+  const env = getCurrentEnvironment();
+  const slug = env?.slug || 'sertanejo';
+  const streamUrl = getCurrentStreamUrl();
 
   return (
     <motion.div
       layout
-      className={`glass rounded-2xl p-6 ${glowMap[currentEnvironment]} transition-shadow duration-500`}
+      className={`glass rounded-2xl p-6 ${glowMap[slug] || ''} transition-shadow duration-500`}
     >
-      {/* Ambient gradient */}
       <div
-        className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${gradientMap[currentEnvironment]} pointer-events-none transition-all duration-500`}
+        className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${gradientMap[slug] || ''} pointer-events-none transition-all duration-500`}
       />
 
       <div className="relative z-10">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-lg font-display font-bold text-foreground">{meta.label}</h2>
-            <p className="text-sm text-muted-foreground">{meta.description}</p>
+            <h2 className="text-lg font-display font-bold text-foreground">{env?.label || 'Rádio TVG'}</h2>
+            <p className="text-sm text-muted-foreground">{env?.description || ''}</p>
           </div>
           {isLive && <LiveBadge />}
         </div>
 
-        {/* Visualizer placeholder */}
         <div className="flex items-end justify-center gap-[3px] h-16 mb-6">
           {Array.from({ length: 24 }).map((_, i) => (
             <motion.div
@@ -62,15 +61,13 @@ const AudioPlayerCard = () => {
           ))}
         </div>
 
-        {/* Track info */}
         <div className="text-center mb-6">
           <p className="text-base font-semibold text-foreground">{currentTrack.title}</p>
           <p className="text-sm text-muted-foreground">{currentTrack.artist}</p>
+          {!streamUrl && <p className="text-xs text-muted-foreground/50 mt-1">Stream não configurado</p>}
         </div>
 
-        {/* Controls */}
         <div className="flex items-center justify-center gap-6">
-          {/* Volume */}
           <button
             onClick={() => setVolume(volume > 0 ? 0 : 0.8)}
             className="p-2 rounded-full text-muted-foreground hover:text-foreground transition-colors"
@@ -78,30 +75,24 @@ const AudioPlayerCard = () => {
             {volume === 0 ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
           </button>
 
-          {/* Play/Pause */}
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={togglePlay}
-            className="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-lg hover:brightness-110 transition-all"
+            disabled={!streamUrl}
+            className="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-lg hover:brightness-110 transition-all disabled:opacity-40"
           >
             {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-0.5" />}
           </motion.button>
 
-          {/* Volume slider */}
           <div className="flex items-center gap-2 w-20">
             <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={volume}
+              type="range" min="0" max="1" step="0.01" value={volume}
               onChange={(e) => setVolume(parseFloat(e.target.value))}
               className="w-full h-1 rounded-full appearance-none bg-muted cursor-pointer accent-primary"
             />
           </div>
         </div>
 
-        {/* Sponsor carousel */}
         <SponsorCarousel />
       </div>
     </motion.div>
