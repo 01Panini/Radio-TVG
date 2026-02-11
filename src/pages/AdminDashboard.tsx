@@ -42,10 +42,10 @@ const AdminDashboard = () => {
   };
 
   const menuItems = [
-    { icon: Radio, label: 'Streaming', description: 'Gerenciar streams e ambientes', color: 'text-blue-500' },
-    { icon: Users, label: 'Usuários', description: 'Gerenciar usuários e permissões', color: 'text-green-500' },
-    { icon: BarChart3, label: 'Estatísticas', description: 'Visualizar métricas e analytics', color: 'text-purple-500' },
-    { icon: Settings, label: 'Configurações', description: 'Configurações do sistema', color: 'text-orange-500' },
+    { icon: Radio, label: 'Streaming', description: 'Gerenciar streams e ambientes', color: 'text-blue-500', path: '/admin/streaming' },
+    { icon: Users, label: 'Usuários', description: 'Gerenciar usuários e permissões', color: 'text-green-500', path: '' },
+    { icon: BarChart3, label: 'Estatísticas', description: 'Visualizar métricas e analytics', color: 'text-purple-500', path: '' },
+    { icon: Settings, label: 'Configurações', description: 'Configurações do sistema', color: 'text-orange-500', path: '' },
   ];
 
   return (
@@ -83,7 +83,8 @@ const AdminDashboard = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.06 }}
               whileTap={{ scale: 0.98 }}
-              className="flex items-center gap-4 p-4 rounded-2xl bg-card border border-border cursor-pointer hover:border-primary/30 transition-colors"
+              onClick={() => item.path && navigate(item.path)}
+              className={`flex items-center gap-4 p-4 rounded-2xl bg-card border border-border transition-colors ${item.path ? 'cursor-pointer hover:border-primary/30' : 'opacity-50 cursor-not-allowed'}`}
             >
               <div className={`w-10 h-10 rounded-xl bg-muted flex items-center justify-center ${item.color}`}>
                 <item.icon className="h-5 w-5" />
