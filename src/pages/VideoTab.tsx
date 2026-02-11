@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play } from 'lucide-react';
 import LiveBadge from '@/components/LiveBadge';
 import VideoPlayer from '@/components/VideoPlayer';
+import logoRadio from '@/assets/logo-radio-tvg.png';
 
 import thumbLiveCulto from '@/assets/thumb-live-culto.jpg';
 import thumbManhaSertaneja from '@/assets/thumb-manha-sertaneja.jpg';
@@ -45,7 +46,7 @@ const VideoTab = () => {
       >
         {/* Minimal Header */}
         <header className="flex items-center justify-between px-5 pt-4 pb-2">
-          <h1 className="text-lg font-display font-bold text-foreground tracking-tight">Vídeo</h1>
+          <img src={logoRadio} alt="Rádio TVG" className="h-8 sm:h-9 md:h-10 w-auto object-contain" />
         </header>
 
         {/* Live Hero */}
