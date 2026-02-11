@@ -18,6 +18,8 @@ export interface RadioState {
   currentEnvironmentSlug: string;
   isLive: boolean;
   isVideoActive: boolean;
+  isBuffering: boolean;
+  streamError: string | null;
   environments: StreamEnvironment[];
   environmentsLoaded: boolean;
   currentTrack: {
@@ -29,6 +31,8 @@ export interface RadioState {
   setVolume: (volume: number) => void;
   setEnvironment: (slug: string) => void;
   setVideoActive: (active: boolean) => void;
+  setBuffering: (buffering: boolean) => void;
+  setStreamError: (error: string | null) => void;
   togglePlay: () => void;
   loadEnvironments: () => Promise<void>;
   loadLiveStatus: () => Promise<void>;
@@ -42,6 +46,8 @@ export const useRadioStore = create<RadioState>((set, get) => ({
   currentEnvironmentSlug: '',
   isLive: false,
   isVideoActive: false,
+  isBuffering: false,
+  streamError: null,
   environments: [],
   environmentsLoaded: false,
   currentTrack: {
@@ -63,6 +69,8 @@ export const useRadioStore = create<RadioState>((set, get) => ({
     });
   },
   setVideoActive: (active) => set({ isVideoActive: active }),
+  setBuffering: (buffering) => set({ isBuffering: buffering }),
+  setStreamError: (error) => set({ streamError: error }),
   togglePlay: () => set((s) => ({ isPlaying: !s.isPlaying })),
   loadEnvironments: async () => {
     const { data } = await supabase

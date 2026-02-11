@@ -28,7 +28,7 @@ const AudioEngine = () => {
     isPlaying, volume, getCurrentStreamUrl, getCurrentEnvironment,
     currentEnvironmentSlug, currentTrack, setPlaying,
     loadEnvironments, environmentsLoaded, loadLiveStatus,
-    environments,
+    environments, setBuffering, setStreamError,
   } = useRadioStore();
 
   // Keep ref in sync
@@ -63,6 +63,8 @@ const AudioEngine = () => {
     // Cleanup previous HLS
     hlsRef.current?.destroy();
     hlsRef.current = null;
+    setBuffering(true);
+    setStreamError(null);
 
     if (Hls.isSupported()) {
       const hls = new Hls({ enableWorker: true });
@@ -70,22 +72,41 @@ const AudioEngine = () => {
       hls.loadSource(streamUrl);
       hls.attachMedia(audio);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        setBuffering(false);
         if (isPlayingRef.current) audio.play().catch(() => {});
       });
       hls.on(Hls.Events.ERROR, (_e, data) => {
         if (data.fatal) {
-          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
-          else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+            setStreamError('Erro de conexão. Reconectando...');
+            hls.startLoad();
+          } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+            setStreamError('Erro de mídia. Recuperando...');
+            hls.recoverMediaError();
+          } else {
+            setStreamError('Stream indisponível');
+          }
+          // Clear error after recovery attempt
+          setTimeout(() => setStreamError(null), 4000);
         }
       });
     } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
       audio.src = streamUrl;
+      setBuffering(false);
       if (isPlayingRef.current) audio.play().catch(() => {});
     }
+
+    // Track buffering via audio events
+    const onWaiting = () => setBuffering(true);
+    const onPlaying = () => { setBuffering(false); setStreamError(null); };
+    audio.addEventListener('waiting', onWaiting);
+    audio.addEventListener('playing', onPlaying);
 
     return () => {
       hlsRef.current?.destroy();
       hlsRef.current = null;
+      audio.removeEventListener('waiting', onWaiting);
+      audio.removeEventListener('playing', onPlaying);
     };
   }, [streamUrl]);
 
