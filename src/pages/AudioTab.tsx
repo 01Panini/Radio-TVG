@@ -103,8 +103,8 @@ const AudioTab = () => {
         <div className="relative z-10 px-5 pt-5 pb-8">
           {/* Header */}
           <header className="flex items-center justify-between mb-8">
-            <div className="h-9 overflow-hidden flex items-center">
-              <img src={logoRadio} alt="Rádio TVG" className="h-[200%] w-auto object-contain object-center brightness-0 invert" />
+            <div className="h-10 flex items-center">
+              <img src={logoRadio} alt="Rádio TVG" className="h-full w-auto object-contain" />
             </div>
             {isLive && <LiveBadge />}
           </header>
