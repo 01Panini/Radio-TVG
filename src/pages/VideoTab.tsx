@@ -50,8 +50,8 @@ const VideoTab = () => {
     <>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }} className="min-h-screen pb-36">
         <header className="flex items-center justify-between px-5 pt-5 pb-3">
-          <div className="h-9 overflow-hidden flex items-center">
-            <img src={logoRadio} alt="Rádio TVG" className="h-[200%] w-auto object-contain object-center brightness-0 invert" />
+          <div className="h-10 flex items-center">
+            <img src={logoRadio} alt="Rádio TVG" className="h-full w-auto object-contain" />
           </div>
         </header>
 
