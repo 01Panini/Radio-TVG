@@ -13,11 +13,8 @@ import { Loader2 } from "lucide-react";
 
 // Public pages — direct import (small, always needed)
 import AudioTab from "./pages/AudioTab";
-import VideoTab from "./pages/VideoTab";
 import ProgramasTab from "./pages/ProgramasTab";
-import ProgramaDetalhes from "./pages/ProgramaDetalhes";
 import PerfilTab from "./pages/PerfilTab";
-import ConfigTab from "./pages/ConfigTab";
 import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
 
@@ -45,11 +42,8 @@ const AppLayout = () => {
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<AudioTab />} />
-        <Route path="/video" element={<VideoTab />} />
         <Route path="/programas" element={<ProgramasTab />} />
-        <Route path="/programas/:id" element={<ProgramaDetalhes />} />
         <Route path="/perfil" element={<PerfilTab />} />
-        <Route path="/config" element={<ConfigTab />} />
 
         {/* Admin login — no layout wrapper */}
         <Route path="/admin/login" element={<AdminLogin />} />
