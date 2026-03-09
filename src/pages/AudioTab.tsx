@@ -26,10 +26,6 @@ interface Program {
   start_time: string; end_time: string; is_active: boolean;
 }
 
-interface Video {
-  id: string; title: string; thumbnail_url: string; hls_url: string;
-  duration: string; views_count: number; is_active: boolean;
-}
 
 const AudioTab = () => {
   const {
