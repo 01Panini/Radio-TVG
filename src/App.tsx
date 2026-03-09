@@ -57,13 +57,9 @@ const AppLayout = () => {
         {/* Admin routes — wrapped in AdminLayout + Suspense */}
         <Route path="/admin" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminDashboard /></Suspense></AdminLayout>} />
         <Route path="/admin/streaming" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminStreaming /></Suspense></AdminLayout>} />
-        <Route path="/admin/video" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminVideo /></Suspense></AdminLayout>} />
         <Route path="/admin/sponsors" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminSponsors /></Suspense></AdminLayout>} />
         <Route path="/admin/programs" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminPrograms /></Suspense></AdminLayout>} />
-        <Route path="/admin/programs/:id/gallery" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminProgramGallery /></Suspense></AdminLayout>} />
         <Route path="/admin/users" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminUsers /></Suspense></AdminLayout>} />
-        <Route path="/admin/stats" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminStats /></Suspense></AdminLayout>} />
-        <Route path="/admin/config" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminConfig /></Suspense></AdminLayout>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
