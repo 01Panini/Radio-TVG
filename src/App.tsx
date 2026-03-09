@@ -83,6 +83,7 @@ const App = () => (
         <BrowserRouter>
           <AudioEngine />
           <PlaybackController />
+          <SignupPromoModal />
           <ListeningTracker />
           <AppLayout />
         </BrowserRouter>
