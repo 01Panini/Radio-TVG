@@ -4,7 +4,6 @@ import { User, Trophy, Clock, Gift, ChevronRight, LogIn, LogOut, Loader2, Star, 
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import PersistentPlayer from '@/components/PersistentPlayer';
 import heroPerfil from '@/assets/hero-perfil.jpg';
 
 interface Profile {
