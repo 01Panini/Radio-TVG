@@ -229,10 +229,47 @@ const AudioEngine = () => {
         }
       });
     } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
-      // Safari native HLS
+      // Safari native HLS — with error recovery
       audio.src = url;
       setBuffering(false);
       if (isPlayingRef.current) audio.play().catch(() => {});
+
+      // Safari native HLS error recovery (retry after 10s)
+      const onNativeError = () => {
+        logAudioState('Safari native HLS error', 'will retry in 10s');
+        setStreamError('Reconectando ao stream...');
+        hlsRetryTimeoutRef.current = setTimeout(() => {
+          logAudioState('Safari native HLS retry', 'reassigning source');
+          audio.src = url;
+          setStreamError(null);
+          if (isPlayingRef.current) audio.play().catch(() => {
+            console.warn('[HLS] Safari native retry failed');
+          });
+        }, 10000);
+      };
+      audio.addEventListener('error', onNativeError);
+
+      // iOS interruption recovery (phone calls, Siri)
+      const onInterruptPause = () => {
+        logAudioState('audio pause (native)', 'checking if should resume');
+        if (isPlayingRef.current) {
+          setTimeout(() => {
+            if (isPlayingRef.current && audio.paused) {
+              logAudioState('iOS interruption recovery', 'resuming playback');
+              audio.play().catch(() => {});
+            }
+          }, 1000);
+        }
+      };
+      audio.addEventListener('pause', onInterruptPause);
+
+      // Store cleanup refs for this path
+      const nativeCleanup = () => {
+        audio.removeEventListener('error', onNativeError);
+        audio.removeEventListener('pause', onInterruptPause);
+      };
+      // Attach to audio element for cleanup in cleanupHls
+      (audio as any).__nativeCleanup = nativeCleanup;
     }
   }, [setBuffering, setStreamError]);
 
