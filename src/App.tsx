@@ -24,13 +24,9 @@ import NotFound from "./pages/NotFound";
 // Admin pages — lazy loaded
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminStreaming = lazy(() => import("./pages/AdminStreaming"));
-const AdminVideo = lazy(() => import("./pages/AdminVideo"));
 const AdminSponsors = lazy(() => import("./pages/AdminSponsors"));
 const AdminPrograms = lazy(() => import("./pages/AdminPrograms"));
-const AdminProgramGallery = lazy(() => import("./pages/AdminProgramGallery"));
 const AdminUsers = lazy(() => import("./pages/AdminUsers"));
-const AdminStats = lazy(() => import("./pages/AdminStats"));
-const AdminConfig = lazy(() => import("./pages/AdminConfig"));
 
 const queryClient = new QueryClient();
 
