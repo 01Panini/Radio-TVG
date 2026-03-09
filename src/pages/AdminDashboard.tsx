@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Radio, Users, Settings, Video, Megaphone, Calendar, Loader2, Circle } from 'lucide-react';
+import { Radio, Users, Megaphone, Calendar, Loader2, Circle, Gift, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -34,22 +34,22 @@ const AdminDashboard = () => {
     {
       label: 'OPERAÇÃO',
       items: [
-        { icon: Radio, label: 'Streaming', desc: 'Áudio · Ambientes', path: '/admin/streaming' },
-        { icon: Video, label: 'Vídeo / Live', desc: 'Stream de vídeo · LIVE', path: '/admin/video' },
+        { icon: Radio, label: 'Streams', desc: 'Gerenciar estações', path: '/admin/streaming' },
+        { icon: Megaphone, label: 'Ads', desc: 'Anúncios e patrocínios', path: '/admin/sponsors' },
       ],
     },
     {
       label: 'CONTEÚDO',
       items: [
-        { icon: Megaphone, label: 'Patrocinadores', desc: 'Gestão de sponsors', path: '/admin/sponsors' },
         { icon: Calendar, label: 'Programação', desc: 'Grade de programas', path: '/admin/programs' },
+        { icon: Gift, label: 'Rewards', desc: 'Catálogo de recompensas', path: '/admin/rewards' },
+        { icon: Zap, label: 'Boosters', desc: 'Multiplicadores de pontos', path: '/admin/boosters' },
       ],
     },
     {
       label: 'SISTEMA',
       items: [
         { icon: Users, label: 'Usuários', desc: 'Roles e permissões', path: '/admin/users' },
-        { icon: Settings, label: 'Configurações', desc: 'Settings gerais', path: '/admin/config' },
       ],
     },
   ];
