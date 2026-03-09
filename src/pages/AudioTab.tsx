@@ -44,12 +44,8 @@ const AudioTab = () => {
 
   useEffect(() => {
     const load = async () => {
-      const [progRes, vidRes] = await Promise.all([
-        supabase.from('programs').select('*').eq('is_active', true).order('day_of_week').order('start_time'),
-        supabase.from('videos').select('*').eq('is_active', true).order('sort_order').limit(6),
-      ]);
-      setPrograms((progRes.data as Program[]) || []);
-      setVideos((vidRes.data as Video[]) || []);
+      const { data } = await supabase.from('programs').select('*').eq('is_active', true).order('day_of_week').order('start_time');
+      setPrograms((data as Program[]) || []);
     };
     load();
   }, []);
