@@ -53,8 +53,10 @@ const AppLayout = () => {
         {/* Admin routes — wrapped in AdminLayout + Suspense */}
         <Route path="/admin" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminDashboard /></Suspense></AdminLayout>} />
         <Route path="/admin/streaming" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminStreaming /></Suspense></AdminLayout>} />
-        <Route path="/admin/sponsors" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminSponsors /></Suspense></AdminLayout>} />
+        <Route path="/admin/ads" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminAds /></Suspense></AdminLayout>} />
         <Route path="/admin/programs" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminPrograms /></Suspense></AdminLayout>} />
+        <Route path="/admin/rewards" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminRewards /></Suspense></AdminLayout>} />
+        <Route path="/admin/boosters" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminBoosters /></Suspense></AdminLayout>} />
         <Route path="/admin/users" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminUsers /></Suspense></AdminLayout>} />
 
         <Route path="*" element={<NotFound />} />
