@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Radio, Users, Settings, Video, Megaphone, Calendar, Loader2, Circle } from 'lucide-react';
+import { Radio, Users, Megaphone, Calendar, Loader2, Circle, Gift, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
