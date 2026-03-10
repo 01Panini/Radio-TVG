@@ -380,10 +380,10 @@ const AudioEngine = () => {
       // Direct audio stream (Icecast/SHOUTcast MP3/AAC) — just set src
       const audio = audioRef.current;
       if (audio) {
-        audio.src = streamUrl;
+        audio.src = sanitizedUrl;
         setBuffering(false);
         if (isPlayingRef.current) audio.play().catch(() => {});
-        logAudioState('Direct stream loaded', streamUrl);
+        logAudioState('Direct stream loaded', sanitizedUrl);
 
         // Error recovery for direct streams
         const onDirectError = () => {
