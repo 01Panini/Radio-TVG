@@ -39,7 +39,7 @@ const AdminLogin = () => {
         throw new Error('Acesso negado. Você não tem permissão de administrador.');
       }
 
-      navigate('/admin');
+      navigate('/admin/dashboard');
     } catch (err: any) {
       setError(err.message === 'Invalid login credentials'
         ? 'Email ou senha incorretos.'
