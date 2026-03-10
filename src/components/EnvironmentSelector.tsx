@@ -34,7 +34,17 @@ const EnvironmentSelector = () => {
             <img src={imgSrc} alt={env.label} className="absolute inset-0 w-full h-full object-cover" />
             <div className={`absolute inset-0 ${isActive ? 'bg-primary/20' : 'bg-black/50'}`} />
             <div className="relative z-10 flex items-end h-full p-3">
-              <span className="text-white text-xs font-semibold drop-shadow-md">{env.label}</span>
+              {env.slug === 'aovivo' ? (
+                <span className="inline-flex items-center gap-1.5 bg-red-600/90 backdrop-blur-sm px-2 py-0.5 rounded-full shadow-[0_0_12px_rgba(220,38,38,0.4)]">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-white shadow-[0_0_6px_rgba(255,255,255,0.8)]" />
+                  </span>
+                  <span className="text-white text-[10px] font-bold uppercase tracking-wider">Ao Vivo</span>
+                </span>
+              ) : (
+                <span className="text-white text-xs font-semibold drop-shadow-md">{env.label}</span>
+              )}
             </div>
           </motion.button>
         );
