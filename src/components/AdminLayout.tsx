@@ -29,7 +29,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       if (!roles) {
         await supabase.auth.signOut();
-        navigate('/admin/login');
+        navigate('/admin');
         return;
       }
 
