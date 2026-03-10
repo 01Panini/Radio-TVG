@@ -15,7 +15,7 @@ import envRaiz from '@/assets/env-raiz.jpg';
 import envGospel from '@/assets/env-gospel.jpg';
 
 const localImageMap: Record<string, string> = {
-  sertanejo: envSertanejo, poprock: envPoprock, raiz: envRaiz, gospel: envGospel,
+  aovivo: envSertanejo, sertanejo: envSertanejo, poprock: envPoprock, raiz: envRaiz, gospel: envGospel,
 };
 
 const DAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
