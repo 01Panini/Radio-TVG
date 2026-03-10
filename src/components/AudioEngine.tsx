@@ -391,7 +391,7 @@ const AudioEngine = () => {
           setStreamError('Reconectando ao stream...');
           hlsRetryTimeoutRef.current = setTimeout(() => {
             logAudioState('Direct stream retry', 'reassigning source');
-            audio.src = streamUrl;
+            audio.src = sanitizedUrl;
             setStreamError(null);
             if (isPlayingRef.current) audio.play().catch(() => {});
           }, 10000);
