@@ -95,7 +95,6 @@ const AudioTab = () => {
             <div className="h-10 flex items-center">
               <img src={logoRadio} alt="Rádio TVG" className="h-full w-auto object-contain" />
             </div>
-            {isLive && <LiveBadge />}
           </header>
 
           {/* Hero content */}
