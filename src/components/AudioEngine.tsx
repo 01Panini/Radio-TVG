@@ -282,13 +282,16 @@ const AudioEngine = () => {
   useEffect(() => {
     if (!streamUrl) return;
 
+    // Sanitize legacy SHOUTcast suffixes (e.g. ",1") that break HTML5 audio
+    const sanitizedUrl = streamUrl.replace(/,\d+$/, '/');
+
     // Cleanup previous source
     cleanupHls();
     cleanupYt();
     setBuffering(true);
     setStreamError(null);
 
-    if (isYouTubeUrl(streamUrl)) {
+    if (isYouTubeUrl(sanitizedUrl)) {
       activeSourceType.current = 'youtube';
       const videoId = extractYouTubeId(streamUrl);
       if (!videoId) {
