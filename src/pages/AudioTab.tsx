@@ -100,11 +100,16 @@ const AudioTab = () => {
 
           {/* Hero content */}
           <div className="flex flex-col items-center text-center">
-            {isLive && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
-                <LiveBadge size="large" />
-              </motion.div>
-            )}
+            {/* Ao Vivo badge */}
+            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="mb-5">
+              <span className="inline-flex items-center gap-2 bg-red-600/90 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-[0_0_20px_rgba(220,38,38,0.4)] border border-red-500/30">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                </span>
+                <span className="text-white text-xs font-bold uppercase tracking-widest">Ao Vivo</span>
+              </span>
+            </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 10 }}
