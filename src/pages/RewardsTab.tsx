@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Gift, Star, Loader2, Trophy } from 'lucide-react';
+import { Gift, Star, Loader2, Trophy, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -87,6 +87,14 @@ const RewardsTab = () => {
           </div>
         </div>
       )}
+
+      {/* Points Info Card */}
+      <div className="mx-4 mb-5">
+        <div className="flex items-center gap-3 p-4 rounded-2xl bg-accent/5 border border-accent/10">
+          <Clock className="h-5 w-5 text-accent flex-shrink-0" />
+          <p className="text-xs text-muted-foreground">A cada 60 minutos ouvindo a rádio você ganha <span className="text-foreground font-semibold">10 pontos</span>.</p>
+        </div>
+      </div>
 
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>

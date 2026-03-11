@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, Plus, Save, Loader2, Power, Pencil, X, Trash2, Upload, ImageIcon, Gift } from 'lucide-react';
+import { ArrowLeft, Plus, Save, Loader2, Power, Pencil, X, Trash2, Upload, ImageIcon, Gift, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -27,6 +27,31 @@ const AdminRewards = () => {
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const handleExportCoupons = async () => {
+    const { data, error } = await supabase.rpc('get_coupon_export');
+    if (error) {
+      toast({ title: 'Erro ao exportar', description: error.message, variant: 'destructive' });
+      return;
+    }
+    if (!data || (data as any[]).length === 0) {
+      toast({ title: 'Sem dados', description: 'Nenhum cupom resgatado ainda.' });
+      return;
+    }
+    const rows = data as { display_name: string; email: string; reward_name: string; coupon_code: string; redeemed_at: string }[];
+    const header = 'display_name,email,reward_name,coupon_code,redeemed_at';
+    const csv = [header, ...rows.map(r =>
+      `"${r.display_name || ''}","${r.email || ''}","${r.reward_name || ''}","${r.coupon_code || ''}","${r.redeemed_at || ''}"`
+    )].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cupons_resgatados.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: 'CSV exportado!' });
+  };
 
   useEffect(() => { fetchRewards(); }, []);
 
@@ -129,6 +154,10 @@ const AdminRewards = () => {
           <h1 className="text-base font-bold text-foreground">Recompensas</h1>
           <p className="text-xs text-muted-foreground">{rewards.filter(r => r.is_active).length} ativas · {rewards.length} total</p>
         </div>
+        <motion.button whileTap={{ scale: 0.95 }} onClick={handleExportCoupons}
+          className="h-9 px-3 rounded-full bg-card border border-border text-foreground flex items-center justify-center gap-1.5 text-xs font-medium hover:bg-muted transition-colors">
+          <Download className="h-3.5 w-3.5" /> Exportar Cupons
+        </motion.button>
         <motion.button whileTap={{ scale: 0.95 }} onClick={() => setShowCreate(!showCreate)}
           className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
           {showCreate ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}

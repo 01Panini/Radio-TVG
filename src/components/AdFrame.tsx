@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink } from 'lucide-react';
 import { useAdsRotation } from '@/hooks/useAdsRotation';
 
-const AdDisplay = () => {
+const AdFrame = () => {
   const { currentAd, totalAds, currentIndex, allAds } = useAdsRotation();
 
   if (!currentAd) return null;
@@ -22,7 +22,7 @@ const AdDisplay = () => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <Wrapper {...wrapperProps} className="block relative">
+          <Wrapper {...wrapperProps} className="block relative" style={{ aspectRatio: '16/9' }}>
             {currentAd.media_type === 'video' ? (
               <video
                 src={currentAd.media_url}
@@ -30,13 +30,13 @@ const AdDisplay = () => {
                 muted
                 loop
                 playsInline
-                className="w-full h-auto max-h-40 object-cover rounded-2xl"
+                className="w-full h-full object-cover rounded-2xl"
               />
             ) : (
               <img
                 src={currentAd.media_url}
                 alt={currentAd.name}
-                className="w-full h-auto max-h-40 object-cover rounded-2xl"
+                className="w-full h-full object-cover rounded-2xl"
                 loading="lazy"
               />
             )}
@@ -59,4 +59,4 @@ const AdDisplay = () => {
   );
 };
 
-export default AdDisplay;
+export default AdFrame;
