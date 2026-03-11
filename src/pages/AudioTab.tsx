@@ -152,6 +152,22 @@ const AudioTab = () => {
               <p className="text-foreground font-semibold text-sm truncate">{currentTrack.title}</p>
               <p className="text-muted-foreground text-xs truncate">{currentTrack.artist}</p>
             </div>
+
+            {/* Volume control */}
+            <div className="flex items-center gap-3 mt-4 w-full max-w-[240px]">
+              <button onClick={() => setVolume(volume > 0 ? 0 : 0.8)} className="text-muted-foreground hover:text-foreground transition-colors">
+                {volume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+              </button>
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.01}
+                value={volume}
+                onChange={(e) => setVolume(parseFloat(e.target.value))}
+                className="flex-1 h-1 appearance-none bg-border rounded-full cursor-pointer accent-primary [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-primary [&::-moz-range-thumb]:border-0"
+              />
+            </div>
           </div>
         </div>
       </section>
