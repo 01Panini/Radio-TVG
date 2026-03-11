@@ -28,7 +28,7 @@ const AudioTab = () => {
   const {
     isPlaying, togglePlay,
     getCurrentEnvironment, getCurrentStreamUrl,
-    isBuffering,
+    isBuffering, currentTrack,
   } = useRadioStore();
 
   const env = getCurrentEnvironment();
