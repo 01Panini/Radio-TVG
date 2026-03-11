@@ -143,8 +143,14 @@ const AudioTab = () => {
             </div>
 
             {isBuffering && isPlaying && (
-              <p className="text-accent text-[10px] mt-3 animate-pulse">Carregando stream...</p>
+              <p className="text-accent text-[10px] mt-1 animate-pulse">Carregando stream...</p>
             )}
+
+            {/* Now playing track info */}
+            <div className="mt-2 text-center max-w-[80%]">
+              <p className="text-foreground font-semibold text-sm truncate">{currentTrack.title}</p>
+              <p className="text-muted-foreground text-xs truncate">{currentTrack.artist}</p>
+            </div>
           </div>
         </div>
       </section>
