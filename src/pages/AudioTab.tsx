@@ -1,13 +1,12 @@
 import { useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Pause, Headphones, Calendar, MessageCircle, ChevronRight } from 'lucide-react';
+import { Play, Pause, Headphones, Calendar, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import LiveBadge from '@/components/LiveBadge';
 import EnvironmentSelector from '@/components/EnvironmentSelector';
 import AdDisplay from '@/components/AdDisplay';
+import AdFrame from '@/components/AdFrame';
 import { useRadioStore } from '@/stores/useRadioStore';
 import { supabase } from '@/integrations/supabase/client';
-import logoRadio from '@/assets/logo-radio-tvg.png';
 
 import envSertanejo from '@/assets/env-sertanejo.jpg';
 import envPoprock from '@/assets/env-poprock.jpg';
@@ -27,7 +26,7 @@ interface Program {
 
 const AudioTab = () => {
   const {
-    isPlaying, togglePlay, isLive,
+    isPlaying, togglePlay,
     getCurrentEnvironment, getCurrentStreamUrl,
     isBuffering,
   } = useRadioStore();
@@ -47,7 +46,6 @@ const AudioTab = () => {
     load();
   }, []);
 
-  // Current program filtered by station
   const now = new Date();
   const currentDay = now.getDay();
   const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -56,13 +54,11 @@ const AudioTab = () => {
     return programs.find(p => {
       const timeMatch = p.day_of_week === currentDay && p.start_time.slice(0, 5) <= currentTime && p.end_time.slice(0, 5) > currentTime;
       if (!timeMatch) return false;
-      // If program has station_id, match with current env
       if (p.station_id && env) return p.station_id === env.id;
-      return true; // No station filter = plays on all
+      return true;
     });
   }, [programs, currentDay, currentTime, env]);
 
-  // Next programs
   const upcoming = useMemo(() => {
     const sorted = [...programs]
       .filter(p => !p.station_id || (env && p.station_id === env.id))
@@ -90,13 +86,6 @@ const AudioTab = () => {
         </div>
 
         <div className="relative z-10 px-5 pt-5 pb-8">
-          {/* Header */}
-          <header className="flex items-center justify-between mb-8">
-            <div className="h-10 flex items-center">
-              <img src={logoRadio} alt="Rádio TVG" className="h-full w-auto object-contain" />
-            </div>
-          </header>
-
           {/* Hero content */}
           <div className="flex flex-col items-center text-center">
             {/* Ao Vivo badge */}
@@ -153,13 +142,6 @@ const AudioTab = () => {
               </div>
             </div>
 
-            {/* WhatsApp */}
-            <motion.a href="https://wa.me/5500000000000" target="_blank" rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-secondary border border-white/[0.06] text-foreground text-sm font-medium hover:bg-secondary/80 transition-colors">
-              <MessageCircle className="h-4 w-4 text-accent" /> Participar no WhatsApp
-            </motion.a>
-
             {isBuffering && isPlaying && (
               <p className="text-accent text-[10px] mt-3 animate-pulse">Carregando stream...</p>
             )}
@@ -167,15 +149,9 @@ const AudioTab = () => {
         </div>
       </section>
 
-      {/* ===== AMBIENTES / STATION SELECTOR (oculto — canal único por enquanto) ===== */}
-      {/* <section className="px-4 mt-6">
-        <h2 className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em] mb-3 px-1">Estações</h2>
-        <EnvironmentSelector />
-      </section> */}
-
-      {/* ===== ANÚNCIOS ===== */}
+      {/* ===== AD FRAME 16:9 ===== */}
       <section className="px-4 mt-6">
-        <AdDisplay />
+        <AdFrame />
       </section>
 
       {/* ===== NO AR AGORA ===== */}
@@ -205,6 +181,11 @@ const AudioTab = () => {
         </section>
       )}
 
+      {/* ===== MID-CONTENT AD ===== */}
+      <section className="px-4 mt-6">
+        <AdDisplay />
+      </section>
+
       {/* ===== PRÓXIMOS PROGRAMAS ===== */}
       {upcoming.length > 0 && (
         <section className="px-4 mt-6">
@@ -232,7 +213,6 @@ const AudioTab = () => {
           </div>
         </section>
       )}
-
     </motion.div>
   );
 };

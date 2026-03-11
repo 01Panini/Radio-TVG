@@ -7,9 +7,10 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import BottomNav from "./components/BottomNav";
 import AudioEngine from "./components/AudioEngine";
 import InAppBrowserBanner from "./components/InAppBrowserBanner";
-import PersistentPlayer from "./components/PersistentPlayer";
+import AppHeader from "./components/AppHeader";
 import SignupPromoModal from "./components/SignupPromoModal";
 import ListeningTracker from "./components/ListeningTracker";
+import InstallAppPrompt from "./components/InstallAppPrompt";
 import ErrorBoundary from "./components/ErrorBoundary";
 import AdminLayout from "./components/AdminLayout";
 import { Loader2 } from "lucide-react";
@@ -47,6 +48,7 @@ const AppLayout = () => {
 
   return (
     <div className={`min-h-screen bg-background ${isAdmin ? '' : 'max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-4xl mx-auto'} relative`}>
+      {!isAdmin && <AppHeader />}
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<AudioTab />} />
@@ -70,7 +72,6 @@ const AppLayout = () => {
 
         <Route path="*" element={<NotFound />} />
       </Routes>
-      {!isAdmin && <PersistentPlayer />}
       {!isAdmin && <BottomNav />}
     </div>
   );
@@ -87,6 +88,7 @@ const App = () => (
           <AudioEngine />
           <SignupPromoModal />
           <ListeningTracker />
+          <InstallAppPrompt />
           <AppLayout />
         </BrowserRouter>
       </ErrorBoundary>

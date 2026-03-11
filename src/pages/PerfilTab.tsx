@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { User, Trophy, Clock, Gift, ChevronRight, LogIn, LogOut, Loader2, Star, Instagram } from 'lucide-react';
+import { User, Trophy, Clock, Gift, ChevronRight, LogIn, LogOut, Loader2, Star, Instagram, Camera } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import heroPerfil from '@/assets/hero-perfil.jpg';
 
 interface Profile {
@@ -21,6 +22,8 @@ interface Redemption {
 }
 
 const INSTAGRAM_HANDLE = 'radiotvg';
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 const PerfilTab = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -28,7 +31,10 @@ const PerfilTab = () => {
   const [redemptions, setRedemptions] = useState<Redemption[]>([]);
   const [rank, setRank] = useState<number | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!user) { setProfile(null); setRedemptions([]); setRank(null); return; }
@@ -49,6 +55,41 @@ const PerfilTab = () => {
     };
     load();
   }, [user]);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      toast({ title: 'Formato inválido', description: 'Use JPG, PNG ou WebP.', variant: 'destructive' });
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      toast({ title: 'Arquivo muito grande', description: 'Máximo 2MB.', variant: 'destructive' });
+      return;
+    }
+
+    setUploadingAvatar(true);
+    const path = `${user.id}/avatar.webp`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(path, file, { upsert: true, contentType: file.type });
+
+    if (uploadError) {
+      toast({ title: 'Erro no upload', description: uploadError.message, variant: 'destructive' });
+      setUploadingAvatar(false);
+      return;
+    }
+
+    const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
+    const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+    await supabase.from('profiles').update({ avatar_url: avatarUrl }).eq('user_id', user.id);
+    setProfile(prev => prev ? { ...prev, avatar_url: avatarUrl } : prev);
+    toast({ title: 'Foto atualizada!' });
+    setUploadingAvatar(false);
+  };
 
   const formatMinutes = (m: number) => {
     if (m < 60) return `${m}min`;
@@ -89,8 +130,6 @@ const PerfilTab = () => {
             Criar conta
           </motion.button>
         </div>
-
-        {/* Instagram Feed (logged out) */}
         <InstagramSection />
       </motion.div>
     );
@@ -112,13 +151,30 @@ const PerfilTab = () => {
             <img src={heroPerfil} alt="Perfil" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
             <div className="relative z-10 flex flex-col items-center justify-end h-full pb-6">
-              {profile?.avatar_url ? (
-                <img src={profile.avatar_url} alt="" className="w-18 h-18 rounded-full border-2 border-white/30 object-cover mb-3" />
-              ) : (
-                <div className="w-18 h-18 rounded-full bg-primary/20 backdrop-blur-xl border border-primary/30 flex items-center justify-center mb-3">
-                  <User className="h-8 w-8 text-primary" />
-                </div>
-              )}
+              {/* Avatar with upload */}
+              <div className="relative mb-3">
+                {profile?.avatar_url ? (
+                  <img src={profile.avatar_url} alt="" className="w-18 h-18 rounded-full border-2 border-white/30 object-cover" />
+                ) : (
+                  <div className="w-18 h-18 rounded-full bg-primary/20 backdrop-blur-xl border border-primary/30 flex items-center justify-center">
+                    <User className="h-8 w-8 text-primary" />
+                  </div>
+                )}
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingAvatar}
+                  className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-lg border-2 border-background disabled:opacity-60"
+                >
+                  {uploadingAvatar ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                />
+              </div>
               <p className="text-white text-lg font-display font-bold">{profile?.display_name || user.email?.split('@')[0]}</p>
               {rank && (
                 <div className="flex items-center gap-1 mt-1">
@@ -145,6 +201,14 @@ const PerfilTab = () => {
               <Trophy className="h-4 w-4 text-amber-400 mx-auto mb-1" />
               <p className="text-lg font-bold text-foreground">{rank ? `#${rank}` : '—'}</p>
               <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Ranking</p>
+            </div>
+          </div>
+
+          {/* Points Info Card */}
+          <div className="px-4 mb-5">
+            <div className="flex items-center gap-3 p-4 rounded-2xl bg-accent/5 border border-accent/10">
+              <Clock className="h-5 w-5 text-accent flex-shrink-0" />
+              <p className="text-xs text-muted-foreground">A cada 60 minutos ouvindo a rádio você ganha <span className="text-foreground font-semibold">10 pontos</span>.</p>
             </div>
           </div>
 
@@ -178,7 +242,6 @@ const PerfilTab = () => {
             </div>
           )}
 
-          {/* Instagram Feed */}
           <InstagramSection />
 
           {/* Logout */}
@@ -194,7 +257,6 @@ const PerfilTab = () => {
   );
 };
 
-// Instagram Feed Section
 const InstagramSection = () => (
   <section className="px-4 mt-6">
     <div className="flex items-center justify-between mb-3 px-1">

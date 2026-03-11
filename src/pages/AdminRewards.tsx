@@ -129,6 +129,10 @@ const AdminRewards = () => {
           <h1 className="text-base font-bold text-foreground">Recompensas</h1>
           <p className="text-xs text-muted-foreground">{rewards.filter(r => r.is_active).length} ativas · {rewards.length} total</p>
         </div>
+        <motion.button whileTap={{ scale: 0.95 }} onClick={handleExportCoupons}
+          className="h-9 px-3 rounded-full bg-card border border-border text-foreground flex items-center justify-center gap-1.5 text-xs font-medium hover:bg-muted transition-colors">
+          <Download className="h-3.5 w-3.5" /> Exportar Cupons
+        </motion.button>
         <motion.button whileTap={{ scale: 0.95 }} onClick={() => setShowCreate(!showCreate)}
           className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
           {showCreate ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
