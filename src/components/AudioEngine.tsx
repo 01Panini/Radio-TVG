@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useRadioStore } from '@/stores/useRadioStore';
 import Hls from 'hls.js';
 import { isYouTubeUrl, extractYouTubeId } from '@/lib/youtube';
+import { useStreamMetadata } from '@/hooks/useStreamMetadata';
 
 import envSertanejo from '@/assets/env-sertanejo.jpg';
 import envPoprock from '@/assets/env-poprock.jpg';
