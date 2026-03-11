@@ -125,7 +125,8 @@ const envColorMap: Record<string, string> = {
   poprock: '--env-poprock',
   raiz: '--env-raiz',
   gospel: '--env-gospel',
-};
+  };
+  setCurrentTrack: (track: { title: string; artist: string; album: string }) => void;
 
 export const getEnvColorVar = (slug: string): string => {
   return envColorMap[slug] || '--env-sertanejo';
