@@ -25,7 +25,7 @@ const AdminRewards = () => {
   const [createForm, setCreateForm] = useState({ name: '', image_url: '', points_cost: 100, partner: '' });
   const [creating, setCreating] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
-  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  
   const navigate = useNavigate();
   const { toast } = useToast();
 
