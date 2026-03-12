@@ -404,14 +404,11 @@ const AudioEngine = () => {
         };
         audio.addEventListener('error', onDirectError);
 
-        // iOS interruption recovery
+        // System interruption detection (phone calls) — stop playback
         const onDirectPause = () => {
           if (isPlayingRef.current) {
-            setTimeout(() => {
-              if (isPlayingRef.current && audio.paused) {
-                audio.play().catch(() => {});
-              }
-            }, 1000);
+            logAudioState('System interruption detected (direct)', 'stopping playback');
+            setPlaying(false);
           }
         };
         audio.addEventListener('pause', onDirectPause);
