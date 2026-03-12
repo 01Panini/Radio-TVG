@@ -203,7 +203,7 @@ const AdminRewards = () => {
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.15 }} className="overflow-hidden">
                     <div className="px-4 pb-4 pt-3 space-y-3 border-t border-border">
                       <InputField label="Nome" value={editForm.name || ''} onChange={v => setEditForm({ ...editForm, name: v })} />
-                      <ImageUploadField imageUrl={editForm.image_url || ''} onUrlChange={url => setEditForm({ ...editForm, image_url: url })} uploadKey={r.id} />
+                      <ImageUploadField imageUrl={editForm.image_url || ''} onUrlChange={url => setEditForm({ ...editForm, image_url: url })} uploadKey={r.id} uploading={uploading} onUpload={uploadImage} />
                       <InputField label="Pontos Necessários" value={String(editForm.points_cost || 0)} onChange={v => setEditForm({ ...editForm, points_cost: Number(v) || 0 })} type="number" />
                       <InputField label="Parceiro" value={editForm.partner || ''} onChange={v => setEditForm({ ...editForm, partner: v })} placeholder="Nome do parceiro" />
                       <motion.button whileTap={{ scale: 0.98 }} onClick={saveEdit} disabled={saving === r.id}
