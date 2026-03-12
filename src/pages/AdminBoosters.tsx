@@ -84,13 +84,7 @@ const AdminBoosters = () => {
     toast({ title: 'Excluído' }); fetchBoosters(); setSaving(null);
   };
 
-  const InputField = ({ label, value, onChange, placeholder, type = 'text' }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string }) => (
-    <div>
-      <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">{label}</label>
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full h-9 px-3 rounded-xl bg-background border border-border text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/50" />
-    </div>
-  );
+
 
   const MultiplierSelector = ({ value, onChange }: { value: number; onChange: (v: number) => void }) => (
     <div>
