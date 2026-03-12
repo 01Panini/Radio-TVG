@@ -146,7 +146,7 @@ const AdminRewards = () => {
               <div className="p-4 rounded-2xl bg-card border border-border space-y-3 mb-4">
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nova Recompensa</p>
                 <InputField label="Nome" value={createForm.name} onChange={v => setCreateForm({ ...createForm, name: v })} placeholder="Nome da recompensa" />
-                <ImageUploadField imageUrl={createForm.image_url} onUrlChange={url => setCreateForm({ ...createForm, image_url: url })} uploadKey="new-reward" />
+                <ImageUploadField imageUrl={createForm.image_url} onUrlChange={url => setCreateForm({ ...createForm, image_url: url })} uploadKey="new-reward" uploading={uploading} onUpload={uploadImage} />
                 <InputField label="Pontos Necessários" value={String(createForm.points_cost)} onChange={v => setCreateForm({ ...createForm, points_cost: Number(v) || 0 })} type="number" />
                 <InputField label="Parceiro" value={createForm.partner} onChange={v => setCreateForm({ ...createForm, partner: v })} placeholder="Nome do parceiro" />
                 <motion.button whileTap={{ scale: 0.98 }} onClick={handleCreate} disabled={creating || !createForm.name}
