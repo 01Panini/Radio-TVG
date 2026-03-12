@@ -75,6 +75,7 @@ const AudioEngine = () => {
   const activeSourceType = useRef<'hls' | 'youtube' | null>(null);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
   const hlsRetryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const userInitiatedPauseRef = useRef(false);
 
   const {
     isPlaying, volume, getCurrentStreamUrl, getCurrentEnvironment,
