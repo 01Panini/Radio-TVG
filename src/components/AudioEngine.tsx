@@ -263,16 +263,11 @@ const AudioEngine = () => {
       };
       audio.addEventListener('error', onNativeError);
 
-      // iOS interruption recovery (phone calls, Siri)
+      // System interruption detection (phone calls, Siri) — stop playback
       const onInterruptPause = () => {
-        logAudioState('audio pause (native)', 'checking if should resume');
         if (isPlayingRef.current) {
-          setTimeout(() => {
-            if (isPlayingRef.current && audio.paused) {
-              logAudioState('iOS interruption recovery', 'resuming playback');
-              audio.play().catch(() => {});
-            }
-          }, 1000);
+          logAudioState('System interruption detected (native)', 'stopping playback');
+          setPlaying(false);
         }
       };
       audio.addEventListener('pause', onInterruptPause);
