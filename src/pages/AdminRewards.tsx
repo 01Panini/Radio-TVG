@@ -1,9 +1,10 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, Plus, Save, Loader2, Power, Pencil, X, Trash2, Upload, ImageIcon, Gift, Download } from 'lucide-react';
+import { ArrowLeft, Plus, Save, Loader2, Power, Pencil, X, Trash2, Gift, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { InputField, ImageUploadField } from '@/components/admin/AdminFormFields';
 
 interface Reward {
   id: string;
@@ -24,7 +25,7 @@ const AdminRewards = () => {
   const [createForm, setCreateForm] = useState({ name: '', image_url: '', points_cost: 100, partner: '' });
   const [creating, setCreating] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
-  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -115,34 +116,8 @@ const AdminRewards = () => {
     toast({ title: 'Excluído' }); fetchRewards(); setSaving(null);
   };
 
-  const ImageUploadField = ({ imageUrl, onUrlChange, uploadKey }: { imageUrl: string; onUrlChange: (url: string) => void; uploadKey: string }) => (
-    <div className="space-y-1.5">
-      <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider block">Imagem</label>
-      {imageUrl ? (
-        <div className="relative inline-block">
-          <img src={imageUrl} alt="" className="h-14 w-auto rounded-xl border border-border object-contain bg-muted/30" />
-          <button onClick={() => onUrlChange('')} className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center"><X className="h-2.5 w-2.5" /></button>
-        </div>
-      ) : (
-        <div className="h-14 w-24 rounded-xl border-2 border-dashed border-border flex items-center justify-center bg-muted/10"><ImageIcon className="h-4 w-4 text-muted-foreground/30" /></div>
-      )}
-      <input type="file" accept="image/*" ref={(el) => { fileInputRefs.current[uploadKey] = el; }} className="hidden"
-        onChange={async (e) => { const file = e.target.files?.[0]; if (file) { const url = await uploadImage(file, uploadKey); if (url) onUrlChange(url); } }} />
-      <button type="button" onClick={() => fileInputRefs.current[uploadKey]?.click()} disabled={uploading === uploadKey}
-        className="h-8 px-3 rounded-xl bg-muted text-foreground text-[10px] font-semibold flex items-center gap-1 disabled:opacity-60 hover:bg-muted/80 transition-colors">
-        {uploading === uploadKey ? <Loader2 className="h-3 w-3 animate-spin" /> : <Upload className="h-3 w-3" />}
-        {uploading === uploadKey ? 'Enviando...' : 'Upload'}
-      </button>
-    </div>
-  );
 
-  const InputField = ({ label, value, onChange, placeholder, type = 'text' }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string }) => (
-    <div>
-      <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">{label}</label>
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full h-9 px-3 rounded-xl bg-background border border-border text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/50" />
-    </div>
-  );
+
 
   return (
     <>
@@ -171,7 +146,7 @@ const AdminRewards = () => {
               <div className="p-4 rounded-2xl bg-card border border-border space-y-3 mb-4">
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nova Recompensa</p>
                 <InputField label="Nome" value={createForm.name} onChange={v => setCreateForm({ ...createForm, name: v })} placeholder="Nome da recompensa" />
-                <ImageUploadField imageUrl={createForm.image_url} onUrlChange={url => setCreateForm({ ...createForm, image_url: url })} uploadKey="new-reward" />
+                <ImageUploadField imageUrl={createForm.image_url} onUrlChange={url => setCreateForm({ ...createForm, image_url: url })} uploadKey="new-reward" uploading={uploading} onUpload={uploadImage} />
                 <InputField label="Pontos Necessários" value={String(createForm.points_cost)} onChange={v => setCreateForm({ ...createForm, points_cost: Number(v) || 0 })} type="number" />
                 <InputField label="Parceiro" value={createForm.partner} onChange={v => setCreateForm({ ...createForm, partner: v })} placeholder="Nome do parceiro" />
                 <motion.button whileTap={{ scale: 0.98 }} onClick={handleCreate} disabled={creating || !createForm.name}
@@ -228,7 +203,7 @@ const AdminRewards = () => {
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.15 }} className="overflow-hidden">
                     <div className="px-4 pb-4 pt-3 space-y-3 border-t border-border">
                       <InputField label="Nome" value={editForm.name || ''} onChange={v => setEditForm({ ...editForm, name: v })} />
-                      <ImageUploadField imageUrl={editForm.image_url || ''} onUrlChange={url => setEditForm({ ...editForm, image_url: url })} uploadKey={r.id} />
+                      <ImageUploadField imageUrl={editForm.image_url || ''} onUrlChange={url => setEditForm({ ...editForm, image_url: url })} uploadKey={r.id} uploading={uploading} onUpload={uploadImage} />
                       <InputField label="Pontos Necessários" value={String(editForm.points_cost || 0)} onChange={v => setEditForm({ ...editForm, points_cost: Number(v) || 0 })} type="number" />
                       <InputField label="Parceiro" value={editForm.partner || ''} onChange={v => setEditForm({ ...editForm, partner: v })} placeholder="Nome do parceiro" />
                       <motion.button whileTap={{ scale: 0.98 }} onClick={saveEdit} disabled={saving === r.id}

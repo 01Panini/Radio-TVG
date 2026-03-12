@@ -24,6 +24,63 @@ interface Station {
 
 const MEDIA_TYPES = ['image', 'video', 'banner'] as const;
 
+const MediaPreview = ({ url, type }: { url: string; type: string }) => {
+  if (!url) return <div className="h-10 w-14 rounded-lg bg-muted flex items-center justify-center"><ImageIcon className="h-4 w-4 text-muted-foreground/30" /></div>;
+  if (type === 'video') return <div className="h-10 w-14 rounded-lg bg-muted flex items-center justify-center"><Film className="h-4 w-4 text-muted-foreground/50" /></div>;
+  return <img src={url} alt="" className="h-10 w-14 rounded-lg object-cover border border-border" />;
+};
+
+const InputField = ({ label, value, onChange, placeholder, type = 'text' }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string }) => (
+  <div>
+    <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">{label}</label>
+    <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
+      className="w-full h-9 px-3 rounded-xl bg-background border border-border text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/50" />
+  </div>
+);
+
+const ImageUploadField = ({ mediaUrl, onUrlChange, uploadKey, label = 'Mídia', uploading, onUpload }: { mediaUrl: string; onUrlChange: (url: string) => void; uploadKey: string; label?: string; uploading: string | null; onUpload: (file: File, key: string) => Promise<string | null> }) => {
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  return (
+    <div className="space-y-1.5">
+      <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider block">{label}</label>
+      {mediaUrl ? (
+        <div className="relative inline-block">
+          <img src={mediaUrl} alt="" className="h-14 w-auto rounded-xl border border-border object-contain bg-muted/30" />
+          <button onClick={() => onUrlChange('')} className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center"><X className="h-2.5 w-2.5" /></button>
+        </div>
+      ) : (
+        <div className="h-14 w-24 rounded-xl border-2 border-dashed border-border flex items-center justify-center bg-muted/10"><ImageIcon className="h-4 w-4 text-muted-foreground/30" /></div>
+      )}
+      <input type="file" accept="image/*,video/*" ref={fileRef} className="hidden"
+        onChange={async (e) => { const file = e.target.files?.[0]; if (file) { const url = await onUpload(file, uploadKey); if (url) onUrlChange(url); } }} />
+      <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading === uploadKey}
+        className="h-8 px-3 rounded-xl bg-muted text-foreground text-[10px] font-semibold flex items-center gap-1 disabled:opacity-60 hover:bg-muted/80 transition-colors">
+        {uploading === uploadKey ? <Loader2 className="h-3 w-3 animate-spin" /> : <Upload className="h-3 w-3" />}
+        {uploading === uploadKey ? 'Enviando...' : 'Upload'}
+      </button>
+    </div>
+  );
+};
+
+const StationSelector = ({ selected, onChange, stations }: { selected: string[]; onChange: (ids: string[]) => void; stations: Station[] }) => {
+  const toggleStation = (stationId: string) => {
+    return selected.includes(stationId) ? selected.filter(s => s !== stationId) : [...selected, stationId];
+  };
+  return (
+    <div>
+      <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Estações</label>
+      <div className="flex flex-wrap gap-1.5">
+        {stations.map(s => (
+          <button key={s.id} type="button" onClick={() => onChange(toggleStation(s.id))}
+            className={`h-7 px-2.5 rounded-lg text-[10px] font-bold transition-colors ${selected.includes(s.id) ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:text-foreground'}`}>
+            {s.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const AdminAds = () => {
   const [ads, setAds] = useState<Ad[]>([]);
   const [stations, setStations] = useState<Station[]>([]);
@@ -35,7 +92,7 @@ const AdminAds = () => {
   const [createForm, setCreateForm] = useState({ name: '', media_url: '', media_type: 'image', link_url: '', display_duration: 15, station_ids: [] as string[] });
   const [creating, setCreating] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
-  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -105,60 +162,9 @@ const AdminAds = () => {
     toast({ title: 'Excluído' }); fetchAll(); setSaving(null);
   };
 
-  const toggleStation = (stationId: string, current: string[]) => {
-    return current.includes(stationId) ? current.filter(s => s !== stationId) : [...current, stationId];
-  };
 
   const getStationNames = (ids: string[]) => ids.map(id => stations.find(s => s.id === id)?.label || '?').join(', ');
 
-  const MediaPreview = ({ url, type }: { url: string; type: string }) => {
-    if (!url) return <div className="h-10 w-14 rounded-lg bg-muted flex items-center justify-center"><ImageIcon className="h-4 w-4 text-muted-foreground/30" /></div>;
-    if (type === 'video') return <div className="h-10 w-14 rounded-lg bg-muted flex items-center justify-center"><Film className="h-4 w-4 text-muted-foreground/50" /></div>;
-    return <img src={url} alt="" className="h-10 w-14 rounded-lg object-cover border border-border" />;
-  };
-
-  const ImageUploadField = ({ mediaUrl, onUrlChange, uploadKey, label = 'Mídia' }: { mediaUrl: string; onUrlChange: (url: string) => void; uploadKey: string; label?: string }) => (
-    <div className="space-y-1.5">
-      <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider block">{label}</label>
-      {mediaUrl ? (
-        <div className="relative inline-block">
-          <img src={mediaUrl} alt="" className="h-14 w-auto rounded-xl border border-border object-contain bg-muted/30" />
-          <button onClick={() => onUrlChange('')} className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center"><X className="h-2.5 w-2.5" /></button>
-        </div>
-      ) : (
-        <div className="h-14 w-24 rounded-xl border-2 border-dashed border-border flex items-center justify-center bg-muted/10"><ImageIcon className="h-4 w-4 text-muted-foreground/30" /></div>
-      )}
-      <input type="file" accept="image/*,video/*" ref={(el) => { fileInputRefs.current[uploadKey] = el; }} className="hidden"
-        onChange={async (e) => { const file = e.target.files?.[0]; if (file) { const url = await uploadMedia(file, uploadKey); if (url) onUrlChange(url); } }} />
-      <button type="button" onClick={() => fileInputRefs.current[uploadKey]?.click()} disabled={uploading === uploadKey}
-        className="h-8 px-3 rounded-xl bg-muted text-foreground text-[10px] font-semibold flex items-center gap-1 disabled:opacity-60 hover:bg-muted/80 transition-colors">
-        {uploading === uploadKey ? <Loader2 className="h-3 w-3 animate-spin" /> : <Upload className="h-3 w-3" />}
-        {uploading === uploadKey ? 'Enviando...' : 'Upload'}
-      </button>
-    </div>
-  );
-
-  const StationSelector = ({ selected, onChange }: { selected: string[]; onChange: (ids: string[]) => void }) => (
-    <div>
-      <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Estações</label>
-      <div className="flex flex-wrap gap-1.5">
-        {stations.map(s => (
-          <button key={s.id} type="button" onClick={() => onChange(toggleStation(s.id, selected))}
-            className={`h-7 px-2.5 rounded-lg text-[10px] font-bold transition-colors ${selected.includes(s.id) ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:text-foreground'}`}>
-            {s.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-
-  const InputField = ({ label, value, onChange, placeholder, type = 'text' }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string }) => (
-    <div>
-      <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">{label}</label>
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full h-9 px-3 rounded-xl bg-background border border-border text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/50" />
-    </div>
-  );
 
   return (
     <>
@@ -183,7 +189,7 @@ const AdminAds = () => {
               <div className="p-4 rounded-2xl bg-card border border-border space-y-3 mb-4">
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Novo Anúncio</p>
                 <InputField label="Nome" value={createForm.name} onChange={v => setCreateForm({ ...createForm, name: v })} placeholder="Nome do anunciante" />
-                <ImageUploadField mediaUrl={createForm.media_url} onUrlChange={url => setCreateForm({ ...createForm, media_url: url })} uploadKey="new-ad" />
+                <ImageUploadField mediaUrl={createForm.media_url} onUrlChange={url => setCreateForm({ ...createForm, media_url: url })} uploadKey="new-ad" uploading={uploading} onUpload={uploadMedia} />
                 <div>
                   <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Tipo de Mídia</label>
                   <div className="flex gap-1.5">
@@ -197,7 +203,7 @@ const AdminAds = () => {
                 </div>
                 <InputField label="Link (URL)" value={createForm.link_url} onChange={v => setCreateForm({ ...createForm, link_url: v })} placeholder="https://anunciante.com" type="url" />
                 <InputField label="Duração (segundos)" value={String(createForm.display_duration)} onChange={v => setCreateForm({ ...createForm, display_duration: Number(v) || 15 })} type="number" />
-                <StationSelector selected={createForm.station_ids} onChange={ids => setCreateForm({ ...createForm, station_ids: ids })} />
+                <StationSelector selected={createForm.station_ids} onChange={ids => setCreateForm({ ...createForm, station_ids: ids })} stations={stations} />
                 <motion.button whileTap={{ scale: 0.98 }} onClick={handleCreate} disabled={creating || !createForm.name}
                   className="w-full h-10 rounded-xl bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-60">
                   {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Criar Anúncio'}
@@ -252,7 +258,7 @@ const AdminAds = () => {
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.15 }} className="overflow-hidden">
                     <div className="px-4 pb-4 pt-3 space-y-3 border-t border-border">
                       <InputField label="Nome" value={editForm.name || ''} onChange={v => setEditForm({ ...editForm, name: v })} />
-                      <ImageUploadField mediaUrl={editForm.media_url || ''} onUrlChange={url => setEditForm({ ...editForm, media_url: url })} uploadKey={ad.id} />
+                      <ImageUploadField mediaUrl={editForm.media_url || ''} onUrlChange={url => setEditForm({ ...editForm, media_url: url })} uploadKey={ad.id} uploading={uploading} onUpload={uploadMedia} />
                       <div>
                         <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1 block">Tipo de Mídia</label>
                         <div className="flex gap-1.5">
@@ -267,7 +273,7 @@ const AdminAds = () => {
                       <InputField label="Link (URL)" value={editForm.link_url || ''} onChange={v => setEditForm({ ...editForm, link_url: v })} placeholder="https://anunciante.com" type="url" />
                       <InputField label="Duração (segundos)" value={String(editForm.display_duration || 15)} onChange={v => setEditForm({ ...editForm, display_duration: Number(v) || 15 })} type="number" />
                       <InputField label="Ordem" value={String(editForm.sort_order || 0)} onChange={v => setEditForm({ ...editForm, sort_order: Number(v) || 0 })} type="number" />
-                      <StationSelector selected={editForm.station_ids || []} onChange={ids => setEditForm({ ...editForm, station_ids: ids })} />
+                      <StationSelector selected={editForm.station_ids || []} onChange={ids => setEditForm({ ...editForm, station_ids: ids })} stations={stations} />
                       <motion.button whileTap={{ scale: 0.98 }} onClick={saveEdit} disabled={saving === ad.id}
                         className="w-full h-10 rounded-xl bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-60">
                         {saving === ad.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-3.5 w-3.5" /> Salvar</>}
