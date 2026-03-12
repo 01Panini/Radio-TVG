@@ -132,12 +132,42 @@ const AudioEngine = () => {
   }, [isPlaying]);
 
   // Load environments + live status on mount, then autoplay
+  const autoplayAttemptedRef = useRef(false);
+
   useEffect(() => {
     if (!environmentsLoaded) {
       loadEnvironments().then(() => {
         const url = useRadioStore.getState().getCurrentStreamUrl();
         if (url) {
           setPlaying(true);
+          // Try immediate autoplay; if blocked, wait for first user interaction
+          const tryAutoplay = () => {
+            const audio = audioRef.current;
+            if (!audio || autoplayAttemptedRef.current) return;
+            autoplayAttemptedRef.current = true;
+            
+            const playPromise = audio.play();
+            if (playPromise) {
+              playPromise.catch(() => {
+                logAudioState('Autoplay blocked', 'waiting for first user interaction');
+                const onFirstInteraction = () => {
+                  document.removeEventListener('click', onFirstInteraction, true);
+                  document.removeEventListener('touchstart', onFirstInteraction, true);
+                  if (!isPlayingRef.current) {
+                    setPlaying(true);
+                  }
+                  if (audioRef.current?.paused && isPlayingRef.current) {
+                    audioRef.current.play().catch(() => {});
+                  }
+                  logAudioState('First interaction', 'autoplay triggered');
+                };
+                document.addEventListener('click', onFirstInteraction, true);
+                document.addEventListener('touchstart', onFirstInteraction, true);
+              });
+            }
+          };
+          // Small delay to let the stream source initialize
+          setTimeout(tryAutoplay, 500);
         }
       });
     }
