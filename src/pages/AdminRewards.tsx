@@ -1,9 +1,10 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, Plus, Save, Loader2, Power, Pencil, X, Trash2, Upload, ImageIcon, Gift, Download } from 'lucide-react';
+import { ArrowLeft, Plus, Save, Loader2, Power, Pencil, X, Trash2, Gift, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { InputField, ImageUploadField } from '@/components/admin/AdminFormFields';
 
 interface Reward {
   id: string;

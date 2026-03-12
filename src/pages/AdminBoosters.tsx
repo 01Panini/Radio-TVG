@@ -4,6 +4,7 @@ import { ArrowLeft, Plus, Save, Loader2, Power, Pencil, X, Trash2, Zap } from 'l
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { InputField } from '@/components/admin/AdminFormFields';
 
 interface Booster {
   id: string;

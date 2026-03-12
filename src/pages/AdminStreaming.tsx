@@ -4,6 +4,7 @@ import { ArrowLeft, Save, Loader2, Power, Pencil, X, Plus, Trash2 } from 'lucide
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { InputField } from '@/components/admin/AdminFormFields';
 
 interface StreamEnv {
   id: string;
