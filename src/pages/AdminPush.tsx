@@ -216,12 +216,14 @@ const AdminPush = () => {
         title: '🚀 Push enviada com sucesso!',
         description: `Enviada para ${data?.recipients || 0} dispositivo(s).`,
       });
+      await fetchHistory();
     } catch (err: any) {
       toast({
         title: 'Erro ao enviar push',
         description: err.message || 'Tente novamente',
         variant: 'destructive',
       });
+      await fetchHistory();
     } finally {
       setSending(false);
     }
