@@ -40,7 +40,6 @@ const AudioTab = () => {
   const [programs, setPrograms] = useState<Program[]>([]);
   const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
   const [instaPosts, setInstaPosts] = useState<{ id: string; post_url: string }[]>([]);
-  const [instaLoaded, setInstaLoaded] = useState(false);
 
   useEffect(() => {
     const load = async () => {
