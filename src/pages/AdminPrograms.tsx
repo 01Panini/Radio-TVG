@@ -53,15 +53,27 @@ const AdminPrograms = () => {
 
   const handleSave = async () => {
     if (!form.name.trim()) return toast({ title: 'Nome obrigatório', variant: 'destructive' });
-    const payload = {
-      name: form.name, host: form.host, day_of_week: form.day_of_week,
+    const basePayload = {
+      name: form.name, host: form.host,
       start_time: form.start_time, end_time: form.end_time, station_id: form.station_id || null,
     };
-    const { error } = editingId
-      ? await supabase.from('programs').update(payload).eq('id', editingId)
-      : await supabase.from('programs').insert(payload);
-    if (error) return toast({ title: 'Erro ao salvar', description: error.message, variant: 'destructive' });
-    toast({ title: editingId ? 'Programa atualizado' : 'Programa criado' });
+
+    if (editingId) {
+      const payload = { ...basePayload, day_of_week: form.day_of_week };
+      const { error } = await supabase.from('programs').update(payload).eq('id', editingId);
+      if (error) return toast({ title: 'Erro ao salvar', description: error.message, variant: 'destructive' });
+      toast({ title: 'Programa atualizado' });
+    } else if (form.all_days) {
+      const rows = Array.from({ length: 7 }, (_, i) => ({ ...basePayload, day_of_week: i }));
+      const { error } = await supabase.from('programs').insert(rows);
+      if (error) return toast({ title: 'Erro ao salvar', description: error.message, variant: 'destructive' });
+      toast({ title: 'Programa criado para todos os dias' });
+    } else {
+      const payload = { ...basePayload, day_of_week: form.day_of_week };
+      const { error } = await supabase.from('programs').insert(payload);
+      if (error) return toast({ title: 'Erro ao salvar', description: error.message, variant: 'destructive' });
+      toast({ title: 'Programa criado' });
+    }
     setShowForm(false); setEditingId(null); setForm(emptyForm); fetchData();
   };
 
