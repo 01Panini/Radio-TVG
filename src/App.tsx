@@ -72,6 +72,7 @@ const AppLayout = () => {
         <Route path="/admin/boosters" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminBoosters /></Suspense></AdminLayout>} />
         <Route path="/admin/users" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminUsers /></Suspense></AdminLayout>} />
         <Route path="/admin/vouchers" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminVouchers /></Suspense></AdminLayout>} />
+        <Route path="/admin/instagram" element={<AdminLayout><Suspense fallback={<AdminFallback />}><AdminInstagram /></Suspense></AdminLayout>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
