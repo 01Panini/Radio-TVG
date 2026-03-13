@@ -39,6 +39,7 @@ const AudioTab = () => {
 
   const [programs, setPrograms] = useState<Program[]>([]);
   const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
+  const [whatsappMessage, setWhatsappMessage] = useState<string>('');
   const [instaPosts, setInstaPosts] = useState<{ id: string; post_url: string; thumbnail_url: string | null }[]>([]);
 
   useEffect(() => {
