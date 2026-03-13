@@ -103,6 +103,22 @@ const DropZone = ({ label, dimensions, value, onChange, bucket, folder }: DropZo
   );
 };
 
+interface PushRecord {
+  id: string;
+  title: string;
+  message: string;
+  target: string;
+  recipients: number;
+  status: string;
+  created_at: string;
+}
+
+const TARGET_LABELS: Record<string, string> = {
+  all: 'Todos',
+  active: 'Ativos',
+  inactive: 'Inativos',
+};
+
 const AdminPush = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -116,6 +132,16 @@ const AdminPush = () => {
   const [frequency, setFrequency] = useState('weekly');
   const [linkUrl, setLinkUrl] = useState('');
   const [target, setTarget] = useState('all');
+  const [history, setHistory] = useState<PushRecord[]>([]);
+
+  const fetchHistory = async () => {
+    const { data } = await supabase
+      .from('push_history')
+      .select('id, title, message, target, recipients, status, created_at')
+      .order('created_at', { ascending: false })
+      .limit(30);
+    if (data) setHistory(data as PushRecord[]);
+  };
 
   useEffect(() => {
     const fetch = async () => {
@@ -133,6 +159,7 @@ const AdminPush = () => {
           if (r.key === 'push_link_url') setLinkUrl(r.value);
         });
       }
+      await fetchHistory();
       setLoading(false);
     };
     fetch();
