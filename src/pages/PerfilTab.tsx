@@ -21,6 +21,16 @@ interface Redemption {
   reward_id: string;
 }
 
+interface Voucher {
+  id: string;
+  voucher_code: string;
+  protocol_number: string;
+  points_spent: number;
+  status: string;
+  created_at: string;
+  rewards: { name: string } | null;
+}
+
 const INSTAGRAM_HANDLE = 'tvgmulti';
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
