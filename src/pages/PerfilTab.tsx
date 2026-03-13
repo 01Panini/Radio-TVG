@@ -237,6 +237,42 @@ const PerfilTab = () => {
             </motion.button>
           </div>
 
+          {/* Meus Vouchers */}
+          {vouchers.length > 0 && (
+            <div className="px-4 mb-5">
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.15em] mb-3 px-1 flex items-center gap-1.5">
+                <Ticket className="h-3.5 w-3.5" /> Meus Vouchers
+              </p>
+              <div className="space-y-2">
+                {vouchers.map(v => {
+                  const statusMap: Record<string, { label: string; cls: string }> = {
+                    pending: { label: 'Ativo', cls: 'bg-green-500/10 text-green-500 border-green-500/20' },
+                    redeemed: { label: 'Utilizado', cls: 'bg-blue-500/10 text-blue-500 border-blue-500/20' },
+                    expired: { label: 'Expirado', cls: 'bg-muted text-muted-foreground border-border' },
+                    cancelled: { label: 'Cancelado', cls: 'bg-destructive/10 text-destructive border-destructive/20' },
+                  };
+                  const st = statusMap[v.status] || statusMap.pending;
+                  return (
+                    <div key={v.id} className="px-4 py-3 rounded-xl bg-card/50 border border-white/[0.04]">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-mono text-sm font-bold text-foreground">{v.voucher_code}</span>
+                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${st.cls}`}>{st.label}</span>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground font-mono mb-0.5">{v.protocol_number}</p>
+                      <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                        <span>{(v.rewards as any)?.name || 'Recompensa'}</span>
+                        <span>•</span>
+                        <span>{v.points_spent} pts</span>
+                        <span>•</span>
+                        <span>{new Date(v.created_at).toLocaleDateString('pt-BR')}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Redemption History */}
           {redemptions.length > 0 && (
             <div className="px-4 mb-5">
