@@ -210,6 +210,22 @@ const AudioTab = () => {
         <AdDisplay />
       </section>
 
+      {/* ===== WHATSAPP BUTTON ===== */}
+      {whatsappNumber && (
+        <section className="px-4 mt-6 flex justify-center">
+          <motion.a
+            href={`https://wa.me/${whatsappNumber}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileTap={{ scale: 0.96 }}
+            className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-colors"
+          >
+            <MessageCircle className="h-4.5 w-4.5 text-[#25D366]" />
+            <span className="text-sm font-semibold text-[#25D366]">Participar no WhatsApp</span>
+          </motion.a>
+        </section>
+      )}
+
       {/* ===== PRÓXIMOS PROGRAMAS ===== */}
       {upcoming.length > 0 && (
         <section className="px-4 mt-6">
