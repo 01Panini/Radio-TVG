@@ -64,6 +64,7 @@ const AdminDashboard = () => {
       label: 'Sistema',
       items: [
         { icon: Users, label: 'Usuários', desc: 'Roles e permissões', path: '/admin/users', color: 'bg-slate-500' },
+        { icon: Bell, label: 'Mensagem Push', desc: 'Notificações push', path: '/admin/push', color: 'bg-indigo-500' },
       ],
     },
   ];
