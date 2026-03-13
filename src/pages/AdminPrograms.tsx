@@ -23,7 +23,7 @@ interface Station {
   label: string;
 }
 
-const emptyForm = { name: '', host: '', day_of_week: 1, start_time: '08:00', end_time: '09:00', station_id: '' };
+const emptyForm = { name: '', host: '', day_of_week: 1, all_days: false, start_time: '08:00', end_time: '09:00', station_id: '' };
 
 const inputClass = "w-full h-9 px-3 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-colors";
 const selectClass = "w-full h-9 px-3 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-colors appearance-none";
