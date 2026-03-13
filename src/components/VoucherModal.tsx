@@ -2,7 +2,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { motion } from 'framer-motion';
 import { Copy, Check, Ticket } from 'lucide-react';
 import { useState } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
 
 interface VoucherModalProps {
   open: boolean;
@@ -63,10 +62,15 @@ const VoucherModal = ({ open, onOpenChange, voucherCode, protocolNumber, rewardN
             </p>
           </div>
 
-          {/* QR Code */}
+          {/* QR Code via API */}
           <div className="flex justify-center">
             <div className="p-3 bg-white rounded-xl">
-              <QRCodeSVG value={voucherCode} size={120} level="M" />
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(voucherCode)}`}
+                alt="QR Code"
+                width={120}
+                height={120}
+              />
             </div>
           </div>
 
