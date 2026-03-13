@@ -270,8 +270,9 @@ const AudioTab = () => {
           </div>
           <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
             {instaPosts.map((post, i) => {
-              // Extract embed URL from post URL
-              const embedUrl = post.post_url.replace(/\/?(\?.*)?$/, '/embed/');
+              // Clean URL: remove query params and trailing slash, then add /embed/
+              const cleanUrl = post.post_url.split('?')[0].replace(/\/+$/, '');
+              const embedUrl = `${cleanUrl}/embed/`;
               return (
                 <motion.div
                   key={post.id}
