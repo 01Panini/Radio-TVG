@@ -19,13 +19,29 @@ serve(async (req) => {
       });
     }
 
-    const res = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
-    const data = await res.json();
+    // Fetch the Instagram page HTML and extract og:image
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+        "Accept": "text/html",
+      },
+    });
 
-    return new Response(JSON.stringify({ thumbnail_url: data.thumbnail_url || null }), {
+    const html = await res.text();
+    
+    // Extract og:image meta tag
+    const ogMatch = html.match(/<meta\s+(?:property|name)="og:image"\s+content="([^"]+)"/i)
+      || html.match(/content="([^"]+)"\s+(?:property|name)="og:image"/i);
+    
+    const thumbnail_url = ogMatch?.[1] || null;
+
+    console.log("Extracted thumbnail:", thumbnail_url ? "found" : "not found");
+
+    return new Response(JSON.stringify({ thumbnail_url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    console.error("Error:", e.message);
     return new Response(JSON.stringify({ error: e.message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
