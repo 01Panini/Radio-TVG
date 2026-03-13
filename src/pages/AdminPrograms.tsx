@@ -23,7 +23,7 @@ interface Station {
   label: string;
 }
 
-const emptyForm = { name: '', host: '', day_of_week: 1, start_time: '08:00', end_time: '09:00', station_id: '' };
+const emptyForm = { name: '', host: '', day_of_week: 1, all_days: false, start_time: '08:00', end_time: '09:00', station_id: '' };
 
 const inputClass = "w-full h-9 px-3 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-colors";
 const selectClass = "w-full h-9 px-3 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-colors appearance-none";
@@ -53,20 +53,32 @@ const AdminPrograms = () => {
 
   const handleSave = async () => {
     if (!form.name.trim()) return toast({ title: 'Nome obrigatório', variant: 'destructive' });
-    const payload = {
-      name: form.name, host: form.host, day_of_week: form.day_of_week,
+    const basePayload = {
+      name: form.name, host: form.host,
       start_time: form.start_time, end_time: form.end_time, station_id: form.station_id || null,
     };
-    const { error } = editingId
-      ? await supabase.from('programs').update(payload).eq('id', editingId)
-      : await supabase.from('programs').insert(payload);
-    if (error) return toast({ title: 'Erro ao salvar', description: error.message, variant: 'destructive' });
-    toast({ title: editingId ? 'Programa atualizado' : 'Programa criado' });
+
+    if (editingId) {
+      const payload = { ...basePayload, day_of_week: form.day_of_week };
+      const { error } = await supabase.from('programs').update(payload).eq('id', editingId);
+      if (error) return toast({ title: 'Erro ao salvar', description: error.message, variant: 'destructive' });
+      toast({ title: 'Programa atualizado' });
+    } else if (form.all_days) {
+      const rows = Array.from({ length: 7 }, (_, i) => ({ ...basePayload, day_of_week: i }));
+      const { error } = await supabase.from('programs').insert(rows);
+      if (error) return toast({ title: 'Erro ao salvar', description: error.message, variant: 'destructive' });
+      toast({ title: 'Programa criado para todos os dias' });
+    } else {
+      const payload = { ...basePayload, day_of_week: form.day_of_week };
+      const { error } = await supabase.from('programs').insert(payload);
+      if (error) return toast({ title: 'Erro ao salvar', description: error.message, variant: 'destructive' });
+      toast({ title: 'Programa criado' });
+    }
     setShowForm(false); setEditingId(null); setForm(emptyForm); fetchData();
   };
 
   const handleEdit = (p: Program) => {
-    setForm({ name: p.name, host: p.host, day_of_week: p.day_of_week, start_time: p.start_time.slice(0, 5), end_time: p.end_time.slice(0, 5), station_id: p.station_id || '' });
+    setForm({ name: p.name, host: p.host, day_of_week: p.day_of_week, all_days: false, start_time: p.start_time.slice(0, 5), end_time: p.end_time.slice(0, 5), station_id: p.station_id || '' });
     setEditingId(p.id); setShowForm(true);
   };
 
@@ -109,9 +121,18 @@ const AdminPrograms = () => {
           <p className="text-xs font-semibold text-slate-600">{editingId ? 'Editar' : 'Novo'} Programa</p>
           <input placeholder="Nome do programa" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className={inputClass} />
           <input placeholder="Apresentador" value={form.host} onChange={e => setForm(f => ({ ...f, host: e.target.value }))} className={inputClass} />
-          <select value={String(form.day_of_week)} onChange={e => setForm(f => ({ ...f, day_of_week: Number(e.target.value) }))} className={selectClass}>
-            {DAYS.map((d, i) => <option key={i} value={String(i)}>{d}</option>)}
-          </select>
+          {!editingId && (
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={form.all_days} onChange={e => setForm(f => ({ ...f, all_days: e.target.checked }))}
+                className="w-4 h-4 rounded border-slate-300 text-violet-500 focus:ring-violet-500" />
+              <span className="text-xs font-medium text-slate-700">Todos os dias</span>
+            </label>
+          )}
+          {!form.all_days && (
+            <select value={String(form.day_of_week)} onChange={e => setForm(f => ({ ...f, day_of_week: Number(e.target.value) }))} className={selectClass}>
+              {DAYS.map((d, i) => <option key={i} value={String(i)}>{d}</option>)}
+            </select>
+          )}
           <select value={form.station_id || '__none__'} onChange={e => setForm(f => ({ ...f, station_id: e.target.value === '__none__' ? '' : e.target.value }))} className={selectClass}>
             <option value="__none__">Todas as estações</option>
             {stations.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
