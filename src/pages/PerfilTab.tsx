@@ -48,7 +48,7 @@ const PerfilTab = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!user) { setProfile(null); setRedemptions([]); setRank(null); return; }
+    if (!user) { setProfile(null); setRedemptions([]); setVouchers([]); setRank(null); return; }
     const load = async () => {
       setLoadingProfile(true);
       const [profileRes, redemptionsRes, rankRes] = await Promise.all([
