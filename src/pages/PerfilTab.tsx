@@ -39,6 +39,7 @@ const PerfilTab = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [redemptions, setRedemptions] = useState<Redemption[]>([]);
+  const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const [rank, setRank] = useState<number | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
