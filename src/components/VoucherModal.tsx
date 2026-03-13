@@ -2,7 +2,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { motion } from 'framer-motion';
 import { Copy, Check, Ticket } from 'lucide-react';
 import { useState } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
 
 interface VoucherModalProps {
   open: boolean;
