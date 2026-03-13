@@ -92,6 +92,8 @@ const AdminAds = () => {
   const [createForm, setCreateForm] = useState({ name: '', media_url: '', media_type: 'image', link_url: '', display_duration: 15, station_ids: [] as string[] });
   const [creating, setCreating] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
+  const [headerLogoUrl, setHeaderLogoUrl] = useState('');
+  const [savingLogo, setSavingLogo] = useState(false);
   
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -99,13 +101,28 @@ const AdminAds = () => {
   useEffect(() => { fetchAll(); }, []);
 
   const fetchAll = async () => {
-    const [adsRes, stationsRes] = await Promise.all([
+    const [adsRes, stationsRes, logoRes] = await Promise.all([
       supabase.from('ads').select('*').order('sort_order').order('created_at'),
       supabase.from('stream_environments').select('id, label').order('sort_order'),
+      supabase.from('radio_settings').select('value').eq('key', 'header_logo_url').maybeSingle(),
     ]);
     setAds((adsRes.data as Ad[]) || []);
     setStations((stationsRes.data as Station[]) || []);
+    if (logoRes.data?.value) setHeaderLogoUrl(logoRes.data.value);
     setLoading(false);
+  };
+
+  const saveHeaderLogo = async (url: string) => {
+    setSavingLogo(true);
+    const { data: existing } = await supabase.from('radio_settings').select('id').eq('key', 'header_logo_url').maybeSingle();
+    if (existing) {
+      await supabase.from('radio_settings').update({ value: url }).eq('key', 'header_logo_url');
+    } else {
+      await supabase.from('radio_settings').insert({ key: 'header_logo_url', value: url, label: 'Logo do Topo', category: 'appearance' });
+    }
+    setHeaderLogoUrl(url);
+    setSavingLogo(false);
+    toast({ title: 'Logo do topo atualizada!' });
   };
 
   const uploadMedia = async (file: File, key: string): Promise<string | null> => {
@@ -186,7 +203,27 @@ const AdminAds = () => {
         </button>
       </div>
 
-      <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-6 space-y-3">
+      <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-6 space-y-5">
+        {/* === TOPO — Header Logo === */}
+        <div className="rounded-xl bg-white border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-4 space-y-3">
+          <p className="text-xs font-semibold text-slate-700">🔝 Topo</p>
+          <p className="text-[10px] text-slate-400">Imagem fixa exibida no cabeçalho do app. Tamanho recomendado: <strong>1200 × 200 px</strong></p>
+          <ImageUploadField
+            mediaUrl={headerLogoUrl}
+            onUrlChange={async (url) => {
+              if (url) await saveHeaderLogo(url);
+              else { setHeaderLogoUrl(''); }
+            }}
+            uploadKey="header-logo"
+            uploading={uploading}
+            onUpload={uploadMedia}
+            label="Logo do Topo (1200×200)"
+          />
+          {savingLogo && <div className="flex items-center gap-1.5 text-[10px] text-slate-400"><Loader2 className="h-3 w-3 animate-spin" /> Salvando...</div>}
+        </div>
+
+        {/* === Separator === */}
+        <div className="border-t border-slate-200" />
         <AnimatePresence>
           {showCreate && (
             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
