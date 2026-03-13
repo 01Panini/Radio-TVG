@@ -250,7 +250,7 @@ const AdminPush = () => {
         description: err.message || 'Tente novamente',
         variant: 'destructive',
       });
-      await fetchHistory();
+      await fetchHistory(0);
     } finally {
       setSending(false);
     }
