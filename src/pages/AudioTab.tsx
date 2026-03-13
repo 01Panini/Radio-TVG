@@ -50,26 +50,7 @@ const AudioTab = () => {
       ]);
       setPrograms((progsRes.data as Program[]) || []);
       if (wpRes.data?.value) setWhatsappNumber(wpRes.data.value);
-
-      const posts = (instaRes.data as any[]) || [];
-      // Fetch thumbnails for posts missing them
-      const enriched = await Promise.all(
-        posts.map(async (post) => {
-          if (post.thumbnail_url) return post;
-          try {
-            const { data } = await supabase.functions.invoke('instagram-thumbnail', {
-              body: { url: post.post_url },
-            });
-            if (data?.thumbnail_url) {
-              // Cache in DB
-              supabase.from('instagram_posts').update({ thumbnail_url: data.thumbnail_url }).eq('id', post.id).then();
-              return { ...post, thumbnail_url: data.thumbnail_url };
-            }
-          } catch {}
-          return post;
-        })
-      );
-      setInstaPosts(enriched);
+      setInstaPosts((instaRes.data as any[]) || []);
     };
     load();
   }, []);
