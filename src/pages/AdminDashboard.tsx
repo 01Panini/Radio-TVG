@@ -57,6 +57,7 @@ const AdminDashboard = () => {
         { icon: Zap, label: 'Boosters', desc: 'Multiplicadores de pontos', path: '/admin/boosters', color: 'bg-amber-500' },
         { icon: Ticket, label: 'Vouchers', desc: 'Gestão de vouchers', path: '/admin/vouchers', color: 'bg-emerald-500' },
         { icon: Instagram, label: 'Instagram', desc: 'Posts do Instagram na home', path: '/admin/instagram', color: 'bg-rose-500' },
+        { icon: MessageCircle, label: 'WhatsApp', desc: 'Número e mensagem', path: '/admin/whatsapp', color: 'bg-green-500' },
       ],
     },
     {
