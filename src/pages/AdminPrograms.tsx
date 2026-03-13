@@ -121,9 +121,18 @@ const AdminPrograms = () => {
           <p className="text-xs font-semibold text-slate-600">{editingId ? 'Editar' : 'Novo'} Programa</p>
           <input placeholder="Nome do programa" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className={inputClass} />
           <input placeholder="Apresentador" value={form.host} onChange={e => setForm(f => ({ ...f, host: e.target.value }))} className={inputClass} />
-          <select value={String(form.day_of_week)} onChange={e => setForm(f => ({ ...f, day_of_week: Number(e.target.value) }))} className={selectClass}>
-            {DAYS.map((d, i) => <option key={i} value={String(i)}>{d}</option>)}
-          </select>
+          {!editingId && (
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={form.all_days} onChange={e => setForm(f => ({ ...f, all_days: e.target.checked }))}
+                className="w-4 h-4 rounded border-slate-300 text-violet-500 focus:ring-violet-500" />
+              <span className="text-xs font-medium text-slate-700">Todos os dias</span>
+            </label>
+          )}
+          {!form.all_days && (
+            <select value={String(form.day_of_week)} onChange={e => setForm(f => ({ ...f, day_of_week: Number(e.target.value) }))} className={selectClass}>
+              {DAYS.map((d, i) => <option key={i} value={String(i)}>{d}</option>)}
+            </select>
+          )}
           <select value={form.station_id || '__none__'} onChange={e => setForm(f => ({ ...f, station_id: e.target.value === '__none__' ? '' : e.target.value }))} className={selectClass}>
             <option value="__none__">Todas as estações</option>
             {stations.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
