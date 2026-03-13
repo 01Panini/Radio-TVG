@@ -38,6 +38,7 @@ const AudioTab = () => {
   const navigate = useNavigate();
 
   const [programs, setPrograms] = useState<Program[]>([]);
+  const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
